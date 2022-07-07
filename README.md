@@ -18,7 +18,15 @@ The easiest way to send and receive audio data is via the [Waver](https://github
 
 <a href="https://youtu.be/aj_GLBtU3Vw"><img width="100%" src="https://user-images.githubusercontent.com/1991296/177214041-26456254-d4b5-425b-bc57-48bcfc8f816e.png"></img></a>
 
-#### ggwave-cli
+### Using with Arduino IDE
+
+Install the `ggwave` library via `Tools` -> `Manage Libraries` and select one of the available examples from `File` -> `Examples` -> `ggwave`:
+
+<img width="1018" alt="image" src="https://user-images.githubusercontent.com/1991296/177872493-2878d4d4-543a-4f74-95db-7fb2d5f074be.png">
+
+See the [examples](examples) folder for sample circuits. Feel free to report any problems or feedback by opening an issue in this repo.
+
+### ggwave-cli
 
 Another way to communicate with the microcontrollers is via the [ggwave-cli](https://github.com/ggerganov/ggwave/tree/master/examples/ggwave-cli) command line tool, available in the main [ggwave](https://github.com/ggerganov/ggwave) repository. For example, run the following command to transmit a 16-byte `fixed-length` message, using Direct Sequence Spread (DSS) with `[MT] Fastest` protocol:
 
@@ -29,5 +37,3 @@ $ ./bin/ggwave-cli -l16 -s -t11
 ![image](https://user-images.githubusercontent.com/1991296/177856175-d43fc9aa-1a10-4270-80e4-765a361b30d7.png)
 
 When sending and receiving messages, make sure that both the sender and the receiver have the `fixed-length` option enabled and that the number of bytes for `payloadLength` is the same. Also note that microcontrollers currently support only the mono-tone `[MT]` and dual-tone `[DT]` transmission protocols.
-
-See the [examples](examples) folder for more information.
