@@ -2,10 +2,12 @@
 
 Mirror of https://github.com/ggerganov/ggwave used for the [Arduino Library Manager](https://github.com/arduino/library-registry)
 
+### [Main repo: ggwave](https://github.com/ggerganov/ggwave)
+
 Tested microcontrollers:
-- [Arduino Uno Rev3](https://store-usa.arduino.cc/products/arduino-uno-rev3) (Tx only)
 - [Arduino Nano RP2040 Connect](https://docs.arduino.cc/hardware/nano-rp2040-connect)
 - [NodeMCU-32S, ESP32](https://www.waveshare.com/nodemcu-32s.htm)
+- [Arduino Uno Rev3](https://store-usa.arduino.cc/products/arduino-uno-rev3) (Tx only)
 
 See the [examples](examples) folder for more information.
 
