@@ -1,6 +1,6 @@
 # ggwave-arduino
 
-Mirror of https://github.com/ggerganov/ggwave used for the [Arduino Library Manager](https://github.com/arduino/library-registry)
+Tiny data-over-sound library for microcontrollers
 
 ### [Main repo: ggwave](https://github.com/ggerganov/ggwave)
 
