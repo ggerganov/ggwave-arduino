@@ -14,6 +14,27 @@ The easiest way to send and receive audio data is via the [Waver](https://github
 <a href="https://apps.apple.com/us/app/waver-data-over-sound/id1543607865?itsct=apps_box&amp;itscg=30200&ign-itsct=apps_box#?platform=iphone" style="display: inline-block; overflow: hidden; border-radius: 13px; width: 250px; height: 83px;"><img height="60px" src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/white/en-US?size=250x83&amp;releaseDate=1607558400&h=8e5fafc57929918f684abc83ff8311ef" alt="Download on the App Store"></a>
 <a href='https://play.google.com/store/apps/details?id=com.ggerganov.Waver&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://i.imgur.com/BKDCbKv.png' height="60px"/></a>
 
+The following settings will allow you to test the provided examples without having to modify any of the parameters in the sketches:
+
+<p align="center">
+    <table border=0>
+<tr>
+<td>
+    <img width="100%" alt="Talking buttons" src="https://user-images.githubusercontent.com/1991296/178112907-ff360197-2297-4834-8a79-982ac0939ed9.png"></img>
+</td>
+<td>
+    <img width="100%" alt="Talking buttons" src="https://user-images.githubusercontent.com/1991296/178112962-075afa61-b145-4693-8096-9d2fba0cfc27.png"></img>
+</td>
+<td>
+    <img width="100%" alt="Talking buttons" src="https://user-images.githubusercontent.com/1991296/178113012-8e4d52e9-d781-42e0-b525-bb2ab45c607e.png"></img>
+</td>
+</tr>
+</table>
+</p>
+<p align="center">
+  <i>Img. Using the Waver app. Left: settings for fixed-length transmission. Center: Enable DSS option. Right: Transmit messages</i>
+</p>
+
 ### Short demonstration of ggwave
 
 <a href="https://youtu.be/aj_GLBtU3Vw"><img width="100%" src="https://user-images.githubusercontent.com/1991296/177214041-26456254-d4b5-425b-bc57-48bcfc8f816e.png"></img></a>
