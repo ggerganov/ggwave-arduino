@@ -7,6 +7,7 @@ Tiny data-over-sound library for microcontrollers
 Tested microcontrollers:
 - [Arduino Nano RP2040 Connect](https://docs.arduino.cc/hardware/nano-rp2040-connect)
 - [NodeMCU-32S, ESP32](https://www.waveshare.com/nodemcu-32s.htm)
+- [Teensy 4.0 board](https://www.pjrc.com/store/teensy40.html)
 - [Arduino Uno Rev3](https://store-usa.arduino.cc/products/arduino-uno-rev3) (Tx only)
 
 The easiest way to send and receive audio data is via the [Waver](https://github.com/ggerganov/ggwave/tree/master/examples/waver) application. It is freely available for Android, iOS and can also run directly in the browser: https://waver.ggerganov.com
