@@ -15,11 +15,15 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+#ifdef GGWAVE_DISABLE_LOG
+#define ggprintf(...)
+#else
 #ifdef ARDUINO
 #define ggprintf(...)
 #else
 #define ggprintf(...) \
     g_fptr && fprintf(g_fptr, __VA_ARGS__)
+#endif
 #endif
 
 #define GG_MIN(A, B) (((A) < (B)) ? (A) : (B))
@@ -224,14 +228,14 @@ uint8_t getDSSMagic(int i) {
 #endif
 }
 
-void FFT(float * f, int N, int * ip, float * w) {
-    rdft(N, 1, f, ip, w);
+void FFT(float * f, int N, int * wi, float * wf) {
+    rdft(N, 1, f, wi, wf);
 }
 
-void FFT(const float * src, float * dst, int N, int * ip, float * w) {
+void FFT(const float * src, float * dst, int N, int * wi, float * wf) {
     memcpy(dst, src, N * sizeof(float));
 
-    FFT(dst, N, ip, w);
+    FFT(dst, N, wi, wf);
 }
 
 inline void addAmplitudeSmooth(
@@ -1300,6 +1304,84 @@ bool GGWave::computeFFTR(const float * src, float * dst, int N) {
     return true;
 }
 
+int GGWave::computeFFTR(const float * src, float * dst, int N, int * wi, float * wf) {
+    if (wi == nullptr) return 2*N;
+    if (wf == nullptr) return 3 + sqrt(N/2);
+
+    FFT(src, dst, N, wi, wf);
+
+    return 1;
+}
+
+int GGWave::filter(ggwave_Filter filter, float * waveform, int N, float p0, float p1, float * w) {
+    if (w == nullptr) {
+        switch (filter) {
+            case GGWAVE_FILTER_HANN:                  return N;
+            case GGWAVE_FILTER_HAMMING:               return N;
+            case GGWAVE_FILTER_FIRST_ORDER_HIGH_PASS: return 11;
+        };
+    }
+
+    if (w[0] == 0.0f && w[1] == 0.0f) {
+        switch (filter) {
+            case GGWAVE_FILTER_HANN:
+                {
+                    const float f = 2.0f*M_PI/(float)N;
+                    for (int i = 0; i < N; i++) {
+                        w[i] = 0.5f - 0.5f*cosf(f*(float)i);
+                    }
+                } break;
+            case GGWAVE_FILTER_HAMMING:
+                {
+                    const float f = 2.0f*M_PI/(float)N;
+                    for (int i = 0; i < N; i++) {
+                        w[i] = 0.54f - 0.46f*cosf(f*(float)i);
+                    }
+                } break;
+            case GGWAVE_FILTER_FIRST_ORDER_HIGH_PASS:
+                {
+                    const float th = 2.0f*M_PI*p0/p1;
+                    const float g = cos(th)/(1.0f + sin(th));
+                    w[0] = (1.0f + g)/2.0f;
+                    w[1] = -((1.0f + g)/2.0f);
+                    w[2] = 0.0f;
+                    w[3] = -g;
+                    w[4] = 0.0f;
+
+                    w[5] = 0.0f;
+                    w[6] = 0.0f;
+                    w[7] = 0.0f;
+                    w[8] = 0.0f;
+                } break;
+        };
+    }
+
+    switch (filter) {
+        case GGWAVE_FILTER_HANN:
+        case GGWAVE_FILTER_HAMMING:
+            {
+                for (int i = 0; i < N; i++) {
+                    waveform[i] *= w[i];
+                }
+            } break;
+        case GGWAVE_FILTER_FIRST_ORDER_HIGH_PASS:
+            {
+                for (int i = 0; i < N; i++) {
+                    float xn = waveform[i];
+                    float yn = w[0]*xn + w[1]*w[5] + w[2]*w[6] + w[3]*w[7] + w[4]*w[8];
+                    w[6] = w[5];
+                    w[5] = xn;
+                    w[8] = w[7];
+                    w[7] = yn;
+
+                    waveform[i] = yn;
+                }
+            } break;
+    };
+
+    return 1;
+}
+
 //
 // GGWave::Resampler
 //
@@ -1594,11 +1676,13 @@ void GGWave::decode_variable() {
                         if ((rsLength.Decode(m_dataEncoded.data(), m_rx.data.data()) == 0) && (m_rx.data[0] > 0 && m_rx.data[0] <= 140)) {
                             knownLength = true;
                             decodedLength = m_rx.data[0];
+                            //printf("decoded length = %d, recvDuration_frames = %d\n", decodedLength, m_rx.recvDuration_frames);
 
                             const int nTotalBytesExpected = m_encodedDataOffset + decodedLength + ::getECCBytesForLength(decodedLength);
                             const int nTotalFramesExpected = 2*m_nMarkerFrames + ((nTotalBytesExpected + protocol.bytesPerTx - 1)/protocol.bytesPerTx)*protocol.framesPerTx;
                             if (m_rx.recvDuration_frames > nTotalFramesExpected ||
                                 m_rx.recvDuration_frames < nTotalFramesExpected - 2*m_nMarkerFrames) {
+                                //printf("  - invalid number of frames: %d (expected %d)\n", m_rx.recvDuration_frames, nTotalFramesExpected);
                                 knownLength = false;
                                 break;
                             }
