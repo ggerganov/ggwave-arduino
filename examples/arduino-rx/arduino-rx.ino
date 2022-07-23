@@ -26,13 +26,31 @@
 //
 // Sketch: https://github.com/ggerganov/ggwave/tree/master/examples/arduino-rx
 //
+// ## Pinout for Arduino Nano RP2040 Connect
+//
+// ### I2C Display (optional)
+//
+// | MCU           | Display   |
+// | ------------- | --------- |
+// | GND           | GND       |
+// | 3.3V          | VCC / VDD |
+// | D18 / GPIO 12 | SDA       |
+// | D19 / GPIO 13 | SCL       |
+//
+// ### Peripherals (optional)
+//
+// | MCU           | Periph. |
+// | ------------- | ------- |
+// |  D5 / GPIO 17 | Button  |
+// | D10 / GPIO  5 | Speaker |
+//
 
 // Uncoment this line to enable SSD1306 display output
 //#define DISPLAY_OUTPUT 1
 
 // Uncoment this line to enable long-range transmission
 // The used protocols are slower and use more memory to decode, but are much more robust
-//#define EXAMPLE_LONG_RANGE 1
+//#define LONG_RANGE 1
 
 #include <ggwave.h>
 
@@ -111,7 +129,7 @@ void send_text(GGWave & ggwave, uint8_t pin, const char * text, GGWave::TxProtoc
 
 void setup() {
     Serial.begin(57600);
-    //while (!Serial);
+    while (!Serial);
 
     pinMode(kPinLED0, OUTPUT);
     pinMode(kPinSpeaker, OUTPUT);
@@ -121,6 +139,8 @@ void setup() {
 
 #ifdef DISPLAY_OUTPUT
     {
+        Serial.println(F("Initializing display..."));
+
         // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
         if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
             Serial.println(F("SSD1306 allocation failed"));
@@ -157,12 +177,15 @@ void setup() {
 
         // Adjust the "ggwave" parameters to your needs.
         // Make sure that the "payloadLength" parameter matches the one used on the transmitting side.
-#ifdef EXAMPLE_LONG_RANGE
+#ifdef LONG_RANGE
         // The "FAST" protocols require 2x more memory, so we reduce the payload length to compensate:
         p.payloadLength   = 8;
 #else
         p.payloadLength   = 16;
 #endif
+        Serial.print(F("Using payload length: "));
+        Serial.println(p.payloadLength);
+
         p.sampleRateInp   = sampleRate;
         p.sampleRateOut   = sampleRate;
         p.sampleRate      = sampleRate;
@@ -186,12 +209,12 @@ void setup() {
         // Remove the ones that you don't need to reduce memory usage
         GGWave::Protocols::rx().disableAll();
         //GGWave::Protocols::rx().toggle(GGWAVE_PROTOCOL_DT_NORMAL,  true);
-#ifdef EXAMPLE_LONG_RANGE
+#ifdef LONG_RANGE
         GGWave::Protocols::rx().toggle(GGWAVE_PROTOCOL_DT_FAST,    true);
 #endif
         GGWave::Protocols::rx().toggle(GGWAVE_PROTOCOL_DT_FASTEST, true);
         //GGWave::Protocols::rx().toggle(GGWAVE_PROTOCOL_MT_NORMAL,  true);
-#ifdef EXAMPLE_LONG_RANGE
+#ifdef LONG_RANGE
         GGWave::Protocols::rx().toggle(GGWAVE_PROTOCOL_MT_FAST,    true);
 #endif
         GGWave::Protocols::rx().toggle(GGWAVE_PROTOCOL_MT_FASTEST, true);
@@ -231,7 +254,6 @@ void loop() {
     int but0Prev = HIGH;
 
     GGWave::TxRxData result;
-    GGWave::Spectrum rxSpectrum;
 
     char resultLast[17];
     int tLastReceive = -10000;
@@ -239,6 +261,11 @@ void loop() {
     // Main loop ..
     while (true) {
         while (qsize >= samplesPerFrame) {
+            // Use this with the serial plotter to observe real-time audio signal
+            //for (int i = 0; i < samplesPerFrame; i++) {
+            //    Serial.println(sampleBuffer[qhead + i]);
+            //}
+
             // We have enough captured samples - try to decode any "ggwave" data:
             auto tStart = millis();
 
@@ -277,6 +304,7 @@ void loop() {
 #ifdef DISPLAY_OUTPUT
             const auto t = millis();
 
+            static GGWave::Spectrum rxSpectrum;
             if (ggwave.rxTakeSpectrum(rxSpectrum) && t > 2000) {
                 const bool isNew = t - tLastReceive < 2000;
 

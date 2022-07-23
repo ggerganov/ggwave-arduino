@@ -33,3 +33,11 @@ cp -v   ../ggwave/examples/arduino-tx/arduino-tx.ino ./examples/arduino-tx/
 cp -v   ../ggwave/examples/arduino-tx/README.md      ./examples/arduino-tx/
 cp -v   ../ggwave/examples/arduino-tx/fritzing*      ./examples/arduino-tx/
 
+mkdir -p examples/rp2040-rx
+
+cp -v   ../ggwave/examples/rp2040-rx/rp2040-rx.ino ./examples/rp2040-rx/
+cp -v   ../ggwave/examples/rp2040-rx/*.h           ./examples/rp2040-rx/
+cp -v   ../ggwave/examples/rp2040-rx/*.cpp         ./examples/rp2040-rx/
+cp -v   ../ggwave/examples/rp2040-rx/README.md     ./examples/rp2040-rx/
+cp -v   ../ggwave/examples/rp2040-rx/fritzing*     ./examples/rp2040-rx/
+
