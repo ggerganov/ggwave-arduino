@@ -13,7 +13,7 @@ mkdir -p src/ggwave
 cp -v   ../ggwave/include/ggwave/ggwave.h  ./src/ggwave/
 cp -v   ../ggwave/src/fft.h                ./src/ggwave/
 cp -v   ../ggwave/src/ggwave.cpp           ./src/ggwave/
-cp -vrp ../ggwave/src/reed-solomon         ./src/ggwave/reed-solomon
+cp -vrp ../ggwave/src/reed-solomon/*       ./src/ggwave/reed-solomon/
 
 mkdir -p examples/arduino-rx
 
